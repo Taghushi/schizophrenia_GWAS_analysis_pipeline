@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Schizophrenia GWAS Analysis</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f1117;
+      color: #e0e0e0;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1a1d27;
+      border-bottom: 1px solid #2e3148;
+      padding: 24px 40px;
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    header p {
+      font-size: 0.875rem;
+      color: #8b8fa8;
+      margin-top: 4px;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    .section-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #ffffff;
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #2e3148;
+    }
+
+    section { margin-bottom: 48px; }
+
+    /* tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 8px 20px;
+      border-radius: 6px;
+      border: 1px solid #2e3148;
+      background: #1a1d27;
+      color: #8b8fa8;
+      cursor: pointer;
+      font-size: 0.875rem;
+      transition: all 0.15s;
+    }
+
+    .tab-btn.active {
+      background: #3b5bdb;
+      border-color: #3b5bdb;
+      color: #ffffff;
+    }
+
+    .tab-btn:hover:not(.active) {
+      border-color: #3b5bdb;
+      color: #c0c8ff;
+    }
+
+    /* plots */
+    .plot-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .plot-grid { grid-template-columns: 1fr; }
+    }
+
+    .plot-card {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .plot-card h3 {
+      padding: 14px 18px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #c0c8ff;
+      border-bottom: 1px solid #2e3148;
+    }
+
+    .plot-card img {
+      width: 100%;
+      height: 320px;
+      object-fit: contain;
+      background: #12141e;
+      display: block;
+    }
+
+    /* table */
+    .table-wrapper {
+      background: #1a1d27;
+      border: 1px solid #2e3148;
+      border-radius: 10px;
+      overflow: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    thead tr {
+      background: #12141e;
+    }
+
+    th {
+      padding: 12px 14px;
+      text-align: left;
+      color: #8b8fa8;
+      font-weight: 500;
+      white-space: nowrap;
+      border-bottom: 1px solid #2e3148;
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid #1e2135;
+      color: #d0d4e8;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    tbody tr:last-child td { border-bottom: none; }
+
+    tbody tr:hover { background: #1e2236; }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+
+    .badge-coding   { background: #1e3a2f; color: #4ade80; }
+    .badge-lncrna   { background: #1e2a3a; color: #60a5fa; }
+    .badge-other    { background: #2a1e3a; color: #c084fc; }
+
+    .beta-pos { color: #f87171; font-weight: 600; }
+    .beta-neg { color: #4ade80; font-weight: 600; }
+
+    #tab-content { display: none; }
+    #tab-content.visible { display: block; }
+
+    tbody tr.data-row { cursor: pointer; }
+    tbody tr.data-row:hover td { background: #1e2236; }
+
+    tr.expand-row td {
+      background: #12141e;
+      color: #94a3b8;
+      font-size: 0.82rem;
+      padding: 14px 20px;
+      border-bottom: 2px solid #3b5bdb;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Schizophrenia GWAS Analysis</h1>
+  <p>PGC3 Wave 3 | ~7.5M SNPs across autosomes &nbsp;|&nbsp; 355 independent loci after LD pruning</p>
+</header>
+
+<main>
+
+  <!-- GWAS Plots -->
+  <section>
+    <div class="section-title">Genome-Wide Association Plot for Schizophrenia</div>
+    <ul style="color:#8b8fa8; font-size:0.85rem; margin: 8px 0 20px 20px; line-height:1.8;">
+      <li>As you can see on the Manhattan plot, the strongest association with schizophrenia by far appears on loci within chromosome 6.</li>
+      <li>There are associations above the threshold on nearly every chromosome, supporting the idea that schizophrenia is a very polygenic trait.</li>
+      <li>Chromosomes 9 and 21 show fewer associations above the significance threshold in this dataset.</li>
+      <li>The very high peak in chromosome 6 suggests that a cluster of SNPs on this chromosome are in strong linkage disequilbrium with each other, and they have them same underlying locus driving the signal. </li>
+      
+    </ul>
+    <div style="max-width:800px; margin:0 auto;">
+      <div class="plot-card">
+        <h3>Manhattan Plot</h3>
+        <img src="/plots/manhattan" alt="Manhattan plot">
+      </div>
+    </div>
+  </section>
+
+  <!-- SNP tables -->
+  <section>
+    <div class="section-title">Top 15 Loci by Effect Size</div>
+      <ul style="color:#8b8fa8; font-size:0.85rem; margin: 8px 0 20px 20px; line-height:1.8;">
+        <li>Click on the row to get a drop-down summary of what that gene loci does.</li>
+        <li>Click on the id number to be redirected to ncbi's official SNP report.</li>
+        <li>Sorted by absolute effect size (|BETA|); positive BETA indicates A1 increases schizophrenia risk and negative BETA indicates A2 increases risk.</li>
+        <li>7 of the 15 top loci fall within the Major Histocompatibility Complex (MHC) on chromosome 6. This is a region of extreme linkage disequilibrium that likely tags HLA immune variation</li>
+        
+      </ul>
+    <div class="table-wrapper">
+      <table id="snp-table">
+        <thead>
+          <tr>
+            <th>SNP</th>
+            <th>Chr</th>
+            <th>Position</th>
+            <th>Reference Allele(A1) / Alternate Allele (A2)</th>
+            <th>Beta</th>
+            <th>SE</th>
+            <th>P-value</th>
+            <th>Gene</th>
+            <th>Consequence</th>
+            <th>Biotype</th>
+          </tr>
+        </thead>
+        <tbody id="snp-tbody">
+          <tr><td colspan="10" style="text-align:center;padding:24px;color:#555">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pathway enrichment -->
+  <section>
+    <div class="section-title">Biological Pathway Enrichment: What Do These Genes Do Together?</div>
+    <ul style="color:#8b8fa8; font-size:0.85rem; margin: 8px 0 20px 20px; line-height:1.8;">
+      <li>15 pathways reached statistical significance after multiple-testing correction (adjusted p &lt; 0.05).</li>
+      <li>Calcium signaling, neuronal development, and synaptic function are the dominant biological themes.</li>
+      <li>Cardiac pathways (arrhythmia, cardiomyopathy) reflect shared ion channel genes expressed in both heart and brain; not evidence of cardiac involvement in schizophrenia.</li>
+      <li>Look at the enrichment bubble plot. In the Calcium Ion Import pathway, 4 of 12 genes in this pathway (33%) have a variant associated with schizophrenia.</li>
+      <li>Look at the enrichment bubble plot. In the Regulation of Synapse Disassembly pathway, 2 of 8 genes in this pathway (25%) have a variant associated with schizophrenia.</li>
+      <li>The HLA pathway we have discussed in other sections is excluded here; it is already well-established to be implicated with schizophrenia and there are computational limitations of getting it to hit on pathway enrichment.</li>
+    </ul>
+    <div class="plot-grid">
+      <div class="plot-card">
+        <h3>Enrichment Bar Plot</h3>
+        <img src="/plots/pathway_bar" alt="Pathway enrichment bar plot">
+      </div>
+      <div class="plot-card">
+        <h3>Enrichment Bubble Plot</h3>
+        <img src="/plots/pathway_bubble" alt="Pathway enrichment bubble plot">
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  function biotypeBadge(bt) {
+    if (!bt || bt === "—") return `<span class="badge badge-other">—</span>`;
+    if (bt === "protein_coding") return `<span class="badge badge-coding">protein coding</span>`;
+    if (bt === "lncRNA") return `<span class="badge badge-lncrna">lncRNA</span>`;
+    return `<span class="badge badge-other">${bt.replace(/_/g," ")}</span>`;
+  }
+
+  function betaCell(b) {
+    const cls = parseFloat(b) >= 0 ? "beta-pos" : "beta-neg";
+    return `<span class="${cls}">${b}</span>`;
+  }
+
+  const descriptions = {
+    // Increased risk
+    "rs72843784":  "BTN1A1 (Butyrophilin 1A1) is a protein-coding immune checkpoint molecule of the B7 superfamily; expressed on immune cell surfaces where it modulates T-cell activation and immune tolerance. BTN1A1 sits within the Major Histocompatibility Complex (MHC) on chromosome 6, a region of exceptionally long-range linkage disequilibrium; while the intronic location is credible, the signal may also reflect tagging of nearby HLA class I or class II variants, and fine-mapping would be required to distinguish these possibilities. This SNP falls within an intron of BTN1A1; intronic variants can influence gene expression by altering splicing enhancers or embedded regulatory elements, making the relationship to the gene more direct than a purely proximal assignment.",
+    "rs34961555":  "H2AC7 encodes a histone H2A variant; a core structural protein of the nucleosome that packages DNA into chromatin and regulates genome-wide gene accessibility. H2AC7 is located within the Major Histocompatibility Complex (MHC) on chromosome 6, where extensive linkage disequilibrium spans many genes simultaneously; the synonymous nature of this variant and the dense LD structure make it more likely this SNP is tagging variation in a neighboring gene, such as an HLA locus, rather than directly affecting H2AC7 function. This SNP is a synonymous variant falling in a coding exon of H2AC7; it does not change the amino acid sequence, though synonymous variants can still affect mRNA stability, translation efficiency, or splicing.",
+    "rs2023473":   "TRIM31 is a protein-coding E3 ubiquitin ligase of the TRIM (tripartite motif) family; it is involved in NF-κB signaling and innate immune responses, regulating protein degradation in inflammatory pathways. TRIM31 resides in the Major Histocompatibility Complex (MHC) on chromosome 6, where HLA genes including HLA-A, HLA-B, and HLA-C are nearby; the dense regional LD means this intronic signal could reflect tagging of HLA variation rather than a direct TRIM31 effect, and formal fine-mapping would be needed to resolve this. This SNP falls within an intron of TRIM31; intronic variants can affect splicing or regulatory elements embedded within the gene, representing a more direct relationship than a proximity-only assignment.",
+    "rs13198474":  "SLC17A3 is a protein-coding member of the solute carrier 17 (SLC17) family; this family includes vesicular glutamate transporters responsible for packaging glutamate into synaptic vesicles for neurotransmission. SLC17A3 is located within the Major Histocompatibility Complex (MHC) on chromosome 6; while the 5' UTR consequence strengthens the case for a functional effect on this gene specifically, the dense LD structure of the MHC means this signal could still reflect broader regional association, and its glutamatergic function makes it a biologically compelling but unconfirmed candidate. This SNP falls in the 5' UTR of SLC17A3; 5' UTR variants can directly affect ribosome recruitment, mRNA secondary structure, and translation efficiency, making this a functionally plausible variant with a direct relationship to the gene.",
+    "rs215011":    "CARMIL1 (Capping Protein Regulator and Myosin 1 Linker 1) is a protein-coding regulator of actin filament dynamics; it modulates capping proteins that control actin filament growth, and actin remodeling is essential for dendritic spine morphology and synaptic plasticity in neurons. CARMIL1 is located in the Major Histocompatibility Complex (MHC) region on chromosome 6; while its neuronal actin function is biologically interesting, the MHC's extensive LD structure means this signal may be tagging variation elsewhere in the region, and causal inference requires fine-mapping data. This SNP falls within an intron of CARMIL1; the direct intronic location makes the gene assignment more credible than a proximity-only call, and intronic variants can influence splicing or embedded enhancer elements.",
+    "rs9262135":   "C6orf136 (Chromosome 6 Open Reading Frame 136) is a protein-coding gene of currently unknown function; it has limited published characterization and no well-defined biological pathway assignment. C6orf136 sits within the Major Histocompatibility Complex (MHC) on chromosome 6, where LD is extensive and complex; given its unknown function and proximity to well-characterized HLA genes, this signal most plausibly reflects tagging of nearby HLA variation rather than a direct effect of C6orf136 itself. This SNP falls within an intron of C6orf136; while the intronic location places it physically inside the gene, the lack of any known function for C6orf136 makes it difficult to propose a mechanism by which this variant might influence schizophrenia biology.",
+    "rs3117577":   "MSH5 is a protein-coding MutS homolog of the MutS protein family; it is involved in DNA mismatch repair and meiotic recombination, playing a role in maintaining genomic integrity during cell division. MSH5 resides within the Major Histocompatibility Complex (MHC) on chromosome 6, in close proximity to HLA genes; DNA repair functions are not an obvious schizophrenia mechanism, and the MHC's extensive LD structure makes it probable that this signal reflects association with nearby HLA variation rather than an independent effect of MSH5. This SNP falls within an intron of MSH5; the intronic location places the variant directly within the gene where it could potentially influence splicing or expression, though no specific functional effect has been characterized for this variant.",
+    "rs61937595":  "R3HDM2 is a protein-coding RNA-binding protein containing an R3H domain; this domain binds single-stranded nucleic acids and regulates RNA processing, and RNA-binding proteins have increasingly been implicated in neurological disorders. R3HDM2 is located on chromosome 12, so MHC-driven LD is not a concern; however, without formal fine-mapping of this locus it remains possible that the signal reflects LD with an adjacent gene, as this region has not been extensively characterized in schizophrenia literature. This SNP falls within an intron of R3HDM2 on chromosome 12; unlike the chromosome 6 hits, this locus is outside the MHC region, and the intronic location provides a credible but unconfirmed functional relationship to the gene.",
+    "rs79668541":  "CNNM2 is a protein-coding magnesium transporter of the ancient conserved domain protein (CNNM) family; it is expressed in the brain and kidney and is one of the most consistently replicated non-MHC schizophrenia GWAS loci across multiple independent cohorts. CNNM2 is located on chromosome 10 outside the Major Histocompatibility Complex (MHC); while local LD with the adjacent WBP1L gene cannot be formally excluded, CNNM2's independent replication and direct biological connection to NMDA receptor function through magnesium cofactor requirements make it a high-confidence causal candidate. This SNP falls within an intron of CNNM2 on chromosome 10; the intronic location combined with CNNM2's exceptional replication record across diverse cohorts makes this one of the most credible gene assignments in the increased-risk set.",
+    "rs12571643":  "WBP1L (WW Domain Binding Protein 1-Like, also known as C10orf26) is a protein-coding gene containing a WW domain; a protein-protein interaction module found across many signaling proteins, though its specific function remains poorly defined in the literature. WBP1L is located immediately adjacent to CNNM2 on chromosome 10; given the strong CNNM2 association and likely local LD between these neighboring genes, this signal most plausibly reflects extension of the CNNM2 association rather than an independent effect of WBP1L, though this cannot be confirmed without r² data. This SNP falls within an intron of WBP1L on chromosome 10; while the intronic location places it physically inside the gene, WBP1L's limited functional characterization makes it difficult to propose a biological mechanism independent of its neighbor.",
+    // Decreased risk
+    "rs76888488":  "TCF4 is a protein-coding basic helix-loop-helix (bHLH) transcription factor; it is critical for the development of GABAergic and glutamatergic neurons, and loss-of-function mutations cause Pitt-Hopkins syndrome, a severe neurodevelopmental disorder. TCF4 is located on chromosome 18 outside any known region of complex LD; it is one of the most consistently replicated schizophrenia loci across independent GWAS cohorts, and the presence of two independent signals within this gene in this dataset further supports TCF4 as a high-confidence causal gene rather than an LD artifact. This SNP falls within an intron of TCF4 on chromosome 18; intronic variants in transcription factor genes frequently disrupt embedded enhancers and alter expression levels, consistent with a regulatory rather than protein-altering mechanism.",
+    "rs74914300":  "TCF4 is a protein-coding basic helix-loop-helix (bHLH) transcription factor essential for neuronal development; this is the second independent SNP mapping to TCF4 in the decreased-risk set, both with negative BETA values pointing in the same direction. The presence of two positionally independent signals within TCF4 is itself evidence against a simple LD artifact interpretation; both signals converge on TCF4 regulatory variation as protective, making this the strongest individual gene finding in the decreased-risk set. This SNP also falls within an intron of TCF4 on chromosome 18; the fact that two SNPs within the same gene independently survived LD pruning at 250kb suggests they represent distinct association signals rather than the same underlying variant.",
+    "rs13107325":  "SLC39A8 is a protein-coding zinc and manganese transporter belonging to the ZIP (Zrt/Irt-like protein) family; manganese is a cofactor for numerous brain enzymes involved in dopamine and glutamate metabolism, giving this gene direct neurochemical relevance. SLC39A8 is located on chromosome 4 outside any complex LD region; the missense nature of this variant makes LD-driven misattribution to a neighboring gene unlikely, and this locus has been independently replicated in multiple schizophrenia cohorts, making it one of the highest-confidence causal variants in the analysis. This SNP is a missense variant in SLC39A8; it changes the amino acid sequence of the transporter protein itself, representing the most direct functional consequence in this entire dataset and providing the strongest evidence for a causal effect on the gene rather than a regulatory or LD-driven association.",
+    "rs34592089":  "BANK1 is a protein-coding scaffold protein of the ankyrin repeat domain family; it is primarily expressed in B-cells where it amplifies B-cell receptor signaling, and it has been more commonly associated with autoimmune conditions such as systemic lupus erythematosus in prior GWAS. BANK1 is located on chromosome 4 outside any known complex LD region; its appearance here may reflect genuine immune involvement in schizophrenia liability consistent with growing evidence for B-cell dysregulation in psychiatric disorders, though without further functional evidence this association remains less certain than the neurodevelopmental signals. This SNP falls within an intron of BANK1 on chromosome 4; the intronic location places it directly within the gene, though BANK1's primary immune rather than neuronal expression profile makes the mechanistic connection to schizophrenia less straightforward than other decreased-risk hits.",
+    "rs144821294": "AP3D1 is a protein-coding gene encoding the delta subunit of adaptor protein complex 3 (AP-3); AP-3 sorts transmembrane proteins to lysosomes and synaptic vesicles, including AMPA and NMDA glutamate receptors, making it directly relevant to synaptic receptor trafficking. AP3D1 is located on chromosome 19 outside any known complex LD region; while LD with neighboring genes cannot be formally excluded without r² data, the direct synaptic vesicle function of the AP-3 complex and the gene's location outside high-LD regions make AP3D1 a credible candidate for this association. This SNP falls within an intron of AP3D1 on chromosome 19; the intronic location places it within a gene whose function is directly relevant to glutamatergic synapse maintenance, making the gene assignment biologically plausible.",
+    "rs117145318": "TRPV4 is a protein-coding calcium-permeable non-selective cation channel of the transient receptor potential vanilloid (TRPV) family; it is expressed in neurons, glia, and endothelial cells, and it directly drove the calcium ion import and transmembrane transport pathway enrichment in this analysis. TRPV4 is located on chromosome 12 outside any known complex LD region; its mechanistic connection to calcium dysregulation and independent appearance in schizophrenia candidate gene studies make LD-driven misattribution less likely, though formal fine-mapping would strengthen causal inference. This SNP falls within an intron of TRPV4 on chromosome 12; the intronic location combined with the gene's direct role in calcium signaling — one of the most significant pathway findings here — makes this a biologically coherent association with a credible gene-SNP relationship.",
+    "rs12498839":  "GPM6A is a protein-coding neuronal membrane glycoprotein of the proteolipid protein (PLP) family; it is highly expressed in the brain where it promotes neurite outgrowth, filopodium formation, and neuronal differentiation, directly contributing to the Generation of Neurons pathway enrichment in this analysis. GPM6A is located on chromosome 4 outside any known complex LD region; its strong brain-specific expression, direct contribution to the pathway enrichment findings, and location outside high-LD regions collectively support it as a credible causal candidate, though formal r² data would confirm independence from neighboring genes. This SNP falls within an intron of GPM6A on chromosome 4; the intronic location places the variant within a brain-specifically expressed gene, and GPM6A's neurodevelopmental role makes this one of the more biologically interpretable intronic hits in the dataset.",
+    "rs72986630":  "ZNF823 is a protein-coding KRAB domain-containing zinc finger protein; KRAB zinc finger proteins form one of the largest families of transcriptional repressors in the human genome, regulating large numbers of downstream target genes. ZNF823 is located on chromosome 19 outside any known complex LD region; however, its specific neuronal targets are not well characterized, making it difficult to assess whether LD with a functionally better-annotated neighboring gene might better explain this signal, and this remains one of the less interpretable hits in the decreased-risk set. This SNP falls in the 5' UTR of ZNF823 on chromosome 19; 5' UTR variants can directly affect ribosome recruitment and translation efficiency, suggesting this variant may alter ZNF823 protein levels rather than its sequence, representing a regulatory mechanism with a direct relationship to the gene.",
+    "rs1065861":   "MEF2C is a protein-coding transcription factor of the myocyte enhancer factor 2 (MEF2) family; it has a well-established critical role in neuronal development, synaptic plasticity, and excitatory synapse number regulation, and loss-of-function mutations cause intellectual disability, autism, and epilepsy in humans. MEF2C is located on chromosome 5 outside any known complex LD region; it is one of the most consistently replicated and biologically validated schizophrenia candidate genes across multiple GWAS cohorts, making LD-driven misattribution unlikely and placing MEF2C among the highest-confidence findings in this analysis. This SNP falls within an intron of MEF2C on chromosome 5; MEF2C is a large gene with complex intronic regulatory architecture, and intronic variants in this gene have been shown in other contexts to affect enhancer activity and expression levels in brain tissue.",
+    "rs61897848":  "PACSIN3 is a protein-coding member of the PACSIN/syndapin family of F-BAR domain proteins; PACSIN proteins regulate endocytosis and receptor internalization at synapses, including the recycling of AMPA receptors at glutamatergic synapses. PACSIN3 is located on chromosome 11 outside any known complex LD region; the 5' UTR location, direct synaptic function, and glutamatergic receptor trafficking role make PACSIN3 a biologically plausible candidate consistent with the broader synaptic themes in the decreased-risk gene set, though formal LD data would strengthen the causal claim. This SNP falls in the 5' UTR of PACSIN3 on chromosome 11; 5' UTR variants can directly influence translation efficiency and mRNA stability, suggesting this variant may alter PACSIN3 protein levels with downstream effects on synaptic receptor trafficking, representing a direct and functionally plausible relationship to the gene.",
+  };
+
+  function renderTable(data) {
+    const tbody = document.getElementById("snp-tbody");
+    tbody.innerHTML = data.map((r, i) => `
+      <tr class="data-row" onclick="toggleExpand(${i})">
+        <td><a href="https://www.ncbi.nlm.nih.gov/snp/${r.ID}" target="_blank"
+               style="color:#818cf8;text-decoration:none" onclick="event.stopPropagation()">${r.ID}</a></td>
+        <td>${r.CHROM}</td>
+        <td>${r.POS}</td>
+        <td>${r.A1} / ${r.A2}</td>
+        <td>${betaCell(r.BETA)}</td>
+        <td>${r.SE}</td>
+        <td>${r.PVAL}</td>
+        <td><strong>${r.GENE}</strong></td>
+        <td style="color:#94a3b8">${r.CONSEQUENCE !== "—" ? r.CONSEQUENCE.replace(/_/g," ") : "—"}</td>
+        <td>${biotypeBadge(r.BIOTYPE)}</td>
+      </tr>
+      <tr class="expand-row" id="expand-${i}" style="display:none">
+        <td colspan="10"><ul style="margin:0;padding-left:18px;line-height:2">${
+          (descriptions[r.ID] || "No description available.")
+            .split(". ")
+            .filter(s => s.trim())
+            .map(s => `<li>${s.trim().replace(/\.?$/, ".")}</li>`)
+            .join("")
+        }</ul></td>
+      </tr>
+    `).join("");
+  }
+
+  function toggleExpand(i) {
+    const row = document.getElementById(`expand-${i}`);
+    row.style.display = row.style.display === "none" ? "table-row" : "none";
+  }
+
+  // load table on page load
+  fetch("/api/snps/top15").then(r => r.json()).then(renderTable);
+</script>
+
+</body>
+</html>
