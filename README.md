@@ -20,15 +20,15 @@ Then copy and paste the url the terminal gives you into safari or firefox. The u
 http://localhost:5050 where localhost is replaced with your computer IP.
 
 ## Repository Structure
-analysis.ipynb       # full pipeline notebook
+- analysis.ipynb   
 
-main.py              # web app
+- main.py              
 
-results/             # pre-computed outputs and plots
+- results/             
 
-requirements.txt
+- requirements.txt
 
-README.md
+- README.md
 
 ## Pipeline (View analysis.ipynb)
 
