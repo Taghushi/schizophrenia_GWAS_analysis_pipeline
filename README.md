@@ -10,11 +10,12 @@ REST API integration, and pathway enrichment analysis.
 
 ---
 
-## Instructions for viewing the Interactive Web App of Findings
+## Launching the Dashboard
 Run the following commands:
 
-- pip install -r requirements.txt
-- python main.py
+- conda env create -f environment.yml
+- conda activate scz_env
+- python app/main.py
 
 Then copy and paste the url the terminal gives you into safari or firefox. The url will look something like 
 http://localhost:5050 where localhost is replaced with your computer IP.
