@@ -1,6 +1,12 @@
 # Schizophrenia GWAS Analysis
 
-An end-to-end analysis of PGC3 2022 schizophrenia GWAS summary statistics — from 7.5 million raw SNPs to annotated loci and biological pathway enrichment — with an interactive Flask web app to explore the results.
+The goal of this project is to find the SNPs(or maybe I should say loci) that are most associated with schizophrenia. On top of this, analyze the genes and biological pathways that are implicated.
+
+This is a production-style bioinformatics pipeline that processes a large data set of 7.5 million SNPs (genetic variants) from the Psychiatric Genomics Consortium Wave to identify significant loci associated with schizophrenia and characterizes the biological pathways they implicate. Results are served through an interactive web dashboard built on FastAPI that only requires two terminal commands that can be found in the next section. The analysis can be seen in analysis.ipynb and is described in this README.
+
+The pipeline spans data ingestion, statistical 
+filtering, genome-wide visualization, linkage disequilibrium pruning, 
+REST API integration, and pathway enrichment analysis.
 
 **Data**: Psychiatric Genomics Consortium Wave 3 (Nature, 2022) — 76,755 cases, 243,649 controls.
 
@@ -48,19 +54,3 @@ The annotated gene list is submitted to Enrichr (GO Biological Process, Molecula
 - **Only one missense variant in the top 15**: SLC39A8 (chr4), a zinc/manganese transporter, is the sole protein-altering variant among the top loci. All others are intronic, 5' UTR, or synonymous.
 
 ---
-
-## Web App
-
-```bash
-cd app
-python main.py
-# open http://localhost:5050
-```
-
-Displays the Manhattan plot, top 15 associated loci (interactive table with gene descriptions), and pathway enrichment plots.
-
----
-
-
-## Stack
-Python · pandas · matplotlib · gseapy · Ensembl VEP API · Flask
