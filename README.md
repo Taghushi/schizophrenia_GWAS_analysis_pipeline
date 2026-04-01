@@ -13,18 +13,18 @@ REST API integration, and pathway enrichment analysis.
 ## Instructions for viewing the Interactive Web App of Findings
 Run the following commands:
 
-pip install -r requirements.txt
-python main.py
+- pip install -r requirements.txt
+- python main.py
 
 Then copy and paste the url the terminal gives you into safari or firefox. The url will look something like 
 http://localhost:5050 where localhost is replaced with your computer IP.
 
 ## Repository Structure
-- analysis.ipynb   
+- analysis.ipynb   (this is where the pipeline is)
 
-- main.py              
-
-- results/             
+- app/   (folder that contains main.py and the index.html for displaying the web page)
+            
+- results/   (folder that contains visualizations and data from analysis)       
 
 - requirements.txt
 
