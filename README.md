@@ -1,7 +1,5 @@
 # Schizophrenia GWAS Analysis
 
-The goal of this project is to find the SNPs(or maybe I should say loci) that are most associated with schizophrenia. On top of this, analyze the genes and biological pathways that are implicated.
-
 This is a production-style bioinformatics pipeline that processes a large data set of 7.5 million SNPs (genetic variants) from the Psychiatric Genomics Consortium Wave to identify significant loci associated with schizophrenia and characterizes the biological pathways they implicate. Results are served through an interactive web dashboard built on FastAPI that only requires two terminal commands that can be found in the next section. The analysis can be seen in analysis.ipynb and is described in this README.
 
 The pipeline spans data ingestion, statistical 
