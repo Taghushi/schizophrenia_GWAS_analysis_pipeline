@@ -19,6 +19,12 @@ python main.py
 Then copy and paste the url the terminal gives you into safari or firefox. The url will look something like 
 http://localhost:5050 where localhost is replaced with your computer IP.
 
+## Repository Structure
+analysis.ipynb       # full pipeline notebook
+main.py              # web app
+results/             # pre-computed outputs and plots
+requirements.txt
+README.md
 
 ## Pipeline (View analysis.ipynb)
 
