@@ -15,6 +15,7 @@ __pycache__/
 .env
 venv/
 env/
+CLAUDE.local.md
 
 # macOS
 .DS_Store
